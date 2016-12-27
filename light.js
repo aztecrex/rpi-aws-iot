@@ -13,10 +13,12 @@ const init = (cb) => {
 }
 
 const on = () => {
+  console.log("turn on");
   gpio.write(pin, true);
 };
 
 const off = () => {
+  console.log("turn off");
   gpio.write(pin, false);
 };
 
