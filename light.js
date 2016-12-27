@@ -3,12 +3,14 @@
 const gpio = require('rpi-gpio-mod');
 const pin = 40;
 
-gpio.setup(pin, err => {
-  if (err) {
-    console.log("cannot setup pin: ", pin);
-    cb(err);
-  } else cb(null, true);
-});
+const init = (cb) {
+  gpio.setup(pin, err => {
+    if (err) {
+      console.log("cannot setup pin: ", pin);
+      cb(err);
+    } else cb(null, true);
+  });
+}
 
 const on = () => {
   gpio.write(pin, true);
@@ -33,6 +35,7 @@ const flash = () => {
   cycle(10);
 };
 
+exports.init = init;
 exports.on = on;
 exports.off = off;
 exports.flash = flash;

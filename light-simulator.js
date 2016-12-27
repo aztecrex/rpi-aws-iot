@@ -14,6 +14,12 @@ const flash = () => {
   console.log("FLASH");
 };
 
+const init = (cb) => {
+  console.log("light initialized");
+  cb(null, "OK");
+};
+
+exports.init = init;
 exports.on = on;
 exports.off = off;
 exports.flash = flash;
