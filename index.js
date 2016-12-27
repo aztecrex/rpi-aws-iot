@@ -1,6 +1,12 @@
 'use strict';
-const iot = require('aws-iot-device-sdk');
 
+const env = process.env.ENV || 'production';
+
+const iot = require('aws-iot-device-sdk');
+const light = (env === 'production')
+  ? require('./light')
+  : require('./light-simulator');
+console.log(JSON.stringify(light));
 const topic = 'info';
 const thingName = 'GroundPi';
 
@@ -27,14 +33,14 @@ device
 
 const updateDisplay = state => {
   if (state.lamp) {
-    console.log("ON");
+    light.on();
   } else {
-    console.log("OFF");
+    light.off();
   }
 };
 
 const flashDisplay = () => {
-  console.log("FLASH");
+  light.flash();
   thing.get(thingName);
 };
 
