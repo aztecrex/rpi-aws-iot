@@ -3,7 +3,7 @@
 const gpio = require('rpi-gpio-mod');
 const pin = 40;
 
-const init = (cb) {
+const init = (cb) => {
   gpio.setup(pin, err => {
     if (err) {
       console.log("cannot setup pin: ", pin);
