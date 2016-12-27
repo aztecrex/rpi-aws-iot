@@ -21,6 +21,14 @@ const off = () => {
 };
 
 const flash = () => {
+
+  const delay = (seconds, cb) => {
+    setTimeout(
+      () => cb(null, "ding"),
+      seconds * 1000
+    );
+  };
+
   const cycle = rem => {
     if (rem > 0) {
       on();
