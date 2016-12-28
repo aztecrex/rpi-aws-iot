@@ -24,7 +24,7 @@ names:
 0. `npm install`
 0. `node index.js`
 
-# Mess with it
+## Mess with it
 
 0. Go to the IoT console, select your Thing, then go to it's _shadow_. In the shadow,
 add a key called _lamp_ with value _true_.  The LED wired to the Pi will turn on.
@@ -32,9 +32,21 @@ add a key called _lamp_ with value _true_.  The LED wired to the Pi will turn on
 0. Go to the _test_ console and send any message to the topic _info_. The LED will flash
 a few times then return to its former state.
 
-# TODO
+## Alexa!
 
-0. Add an Alexa skill to operate the shadow and queue.
+Just finished the Alexa integration. No installer or continuous delivery yet but it is
+deployed manually as an AWS Lambda Function. Sample utterances include "turn on the light"
+and "flash the light." It's 12:15AM so I can't try it out too much without waking everyone
+but I did verify it worked to turn the light on. I used the Alexa test console to try the
+other utterances and they all work.
+
+The Alexa integration does the same things that the console operations above describe. It
+updates the _lamp_ value in the "GroudPi" Thing and sends messages to the _info_ topic.
+
+Look in the _alexa_ directory for code.
+
+## TODO
+
 0. Automate the AWS setup.
 0. Constrain the permissions.
 0. Provision less scatterbrained resources. Have each device track its own state. Maybe tie only
