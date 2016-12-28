@@ -48,7 +48,7 @@ const service = () => {
 
   const poll = () => {
     if (queue.length === 0) {
-      delay(1, poll);
+      delay(.1, poll);
     } else {
       let head = queue.shift();
       handle(head, poll);
