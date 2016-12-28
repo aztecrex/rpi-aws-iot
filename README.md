@@ -16,6 +16,11 @@ You can revoke the certificate when you are done if you think it might leak.
 
 ## Run it
 
+0. copy your certificate artifacts into the _certs_ directory using these
+names:
+   - certificate.pem.crt
+   - private.pem.key
+   - root-CA.crt
 0. `npm install`
 0. `node index.js`
 
