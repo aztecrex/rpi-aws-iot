@@ -58,7 +58,17 @@ thing.on('connect', () => {
   console.log('connect', thingName);
   thing.register(thingName, {}, () => {
     console.log("registered");
-    let token = thing.get(thingName);
+    thing.get(thingName);
+    // synchronize once in a while, probably should
+    // use the timeout message instead when I understand
+    // all this a little better
+    const sync = () => {
+      setTimeout(() => {
+        thing.get(thingName);
+        sync();
+      },3000);
+    };
+    sync();
   });
 });
 

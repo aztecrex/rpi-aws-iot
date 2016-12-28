@@ -29,8 +29,6 @@ a few times then return to its former state.
 
 # TODO
 
-0. Add some polling for changes so that the Pi will sync up with the current status when
-it is disconnected from the net and subsequently reconnected.
 0. Add an Alexa skill to operate the shadow and queue.
 0. Automate the AWS setup.
 0. Constrain the permissions.
