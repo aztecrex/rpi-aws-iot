@@ -10,7 +10,7 @@ const light = (env === 'production')
 const topic = 'info';
 const thingName = 'GroundPi';
 
-light.init(() => {
+light.init();
 
 const device = iot.device({
    keyPath: 'certs/private.pem.key',
@@ -70,5 +70,3 @@ thing.on('status', (thingName, stat, clientToken, stateObject) => {
 thing.on('delta', (thingName, stateObject) => {
     updateDisplay(stateObject.state);
     });
-
-});
