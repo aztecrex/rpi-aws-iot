@@ -1,5 +1,7 @@
 # AWS IoT Experiments on RPi 3
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/-rB4b7DbRlk" frameborder="0" allowfullscreen></iframe>
+
 ## Hardware
 
 Wire up the [test circuit](https://aztecrex.github.io/rpi-verify-gpio/)
