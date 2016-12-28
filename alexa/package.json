@@ -1,0 +1,27 @@
+{
+  "name": "alexa-pi-thing",
+  "version": "1.0.0",
+  "description": "Alexa-driven IoT",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aztecrex/rpi-aws-iot.git"
+  },
+  "keywords": [
+    "Alexa",
+    "IoT",
+    "skill"
+  ],
+  "author": "Greg Wiley",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/aztecrex/rpi-aws-iot/issues"
+  },
+  "homepage": "https://github.com/aztecrex/rpi-aws-iot#readme",
+  "dependencies": {
+    "alexa-sdk": "^1.0.0"
+  }
+}
