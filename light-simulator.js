@@ -14,6 +14,9 @@ const flash = () => {
   console.log("FLASH");
 };
 
+const init = () => {};
+
+exports.init = init;
 exports.on = on;
 exports.off = off;
 exports.flash = flash;

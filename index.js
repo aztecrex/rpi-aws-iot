@@ -6,9 +6,11 @@ const iot = require('aws-iot-device-sdk');
 const light = (env === 'production')
   ? require('./light')
   : require('./light-simulator');
-console.log(JSON.stringify(light));
+
 const topic = 'info';
 const thingName = 'GroundPi';
+
+light.init();
 
 const device = iot.device({
    keyPath: 'certs/private.pem.key',
