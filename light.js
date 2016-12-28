@@ -22,13 +22,11 @@ const service = () => {
   const setFlash = cont => {
     const cycle = rem => {
       if (rem > 0) {
-        setOn();
-        delay(.1, () => {
-          setOff();
-          delay(.1, () => {
-            cycle(rem - 1);
-          });
-        });
+        setOn(
+          () => delay(.1,
+          () => setOff(
+          () => delay(.1,
+          () => cycle(rem - 1)))));
       } else cont();
     };
     cycle(7);
