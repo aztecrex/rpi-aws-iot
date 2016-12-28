@@ -6,9 +6,13 @@ Wire up the [test circuit](https://aztecrex.github.io/rpi-verify-gpio/)
 
 ## AWS IoT
 
-Eventually will need some scripts here. For now, you need a AWS Thing called _GroundPi_
-(or whatever, just change the code if you use something else). Create a certificate
-and attach it to the Thing.
+All device state and messages run through the IoT platform. The platform provides
+both low-level MQTT communication through _topics_ and higher-level persistent
+device state through _Thing Shadows_
+
+Eventually will need some scripts to make setup easy. For now, you need a AWS
+Thing called _GroundPi_ (or whatever, just change the code if you use something
+else). Create a certificate and attach it to the Thing.
 
 I haven't nailed down the permissions yet. For now, just attach a policy to the
 certificate that can do all ops in iot on all resources (yeah, I know, sorry).
@@ -36,9 +40,7 @@ a few times then return to its former state.
 
 Just finished the Alexa integration. No installer or continuous delivery yet but it is
 deployed manually as an AWS Lambda Function. Sample utterances include "turn on the light"
-and "flash the light." It's 12:15AM so I can't try it out too much without waking everyone
-but I did verify it worked to turn the light on. I used the Alexa test console to try the
-other utterances and they all work.
+and "flash the light."
 
 The Alexa integration does the same things that the console operations above describe. It
 updates the _lamp_ value in the "GroudPi" Thing and sends messages to the _info_ topic.
