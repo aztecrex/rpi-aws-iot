@@ -19,6 +19,9 @@ const languageStrings = {
 };
 
 const handlers = {
+    'LaunchRequest': function () {
+        this.emit('AMAZON.HelpIntent');
+    },
     'FlashIntent': function () {
         this.emit(':tell', this.t('FLASH_MESSAGE'));
     },
