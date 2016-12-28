@@ -1,8 +1,9 @@
 'use strict';
 
 const Alexa = require('alexa-sdk');
+const light = require('./light');
 
-const APP_ID = undefined;  // TODO replace with your app ID (OPTIONAL).
+const APP_ID = 'amzn1.ask.skill.26fe2b9f-073c-4822-8c31-30bd85e72f15';
 
 const languageStrings = {
     'en-US': {
@@ -23,13 +24,16 @@ const handlers = {
         this.emit('AMAZON.HelpIntent');
     },
     'FlashIntent': function () {
-        this.emit(':tell', this.t('FLASH_MESSAGE'));
+        let me = this;
+        light.flash(() => me.emit(':tell', me.t('FLASH_MESSAGE')));
     },
     'OnIntent': function () {
-        this.emit(':tell', this.t('ON_MESSAGE'));
+        let me = this;
+        light.on(() => me.emit(':tell', me.t('ON_MESSAGE')));
     },
     'OffIntent': function () {
-        this.emit(':tell', this.t('OFF_MESSAGE'));
+        let me = this;
+        light.off(() => me.emit(':tell', me.t('OFF_MESSAGE')));
     },
     'AMAZON.HelpIntent': function () {
         const speechOutput = this.t('HELP_MESSAGE');
