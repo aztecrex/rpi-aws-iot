@@ -2,19 +2,28 @@
 
 console.log("using device simulator");
 
+var high = false;
+
 const on = () => {
-  console.log("ON");
+  if (!high)
+    console.log("ON");
+  high = true;
 };
 
 const off = () => {
-  console.log("OFF");
+  if (high)
+    console.log("OFF");
+  high = false;
 };
 
 const flash = () => {
   console.log("FLASH");
 };
 
-const init = () => {};
+const init = () => {
+  console.log("OFF");
+  high = false;
+};
 
 exports.init = init;
 exports.on = on;
