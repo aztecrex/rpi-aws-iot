@@ -3,44 +3,82 @@
 const gpio = require('rpi-gpio-mod');
 const pin = 40;
 
-const init = (cb) => {
+const queue =[];
+
+const service = () => {
+
+  const setOn = cont => {
+    gpio.write(pin, true, () => cont());
+  };
+
+  const setOff = cont => {
+    gpio.write(pin, false, () => cont());
+  };
+
+  const delay = (seconds, cont) => {
+    setTimeout(() => cont(), seconds * 1000);
+  };
+
+  const setFlash = cont => {
+    const cycle = rem => {
+      if (rem > 0) {
+        setOn();
+        delay(.1, () => {
+          setOff();
+          delay(.1, () => {
+            cycle(rem - 1);
+          });
+        });
+      } else cont();
+    };
+    cycle(7);
+  };
+
+  handle = (command, cont) => {
+    switch (command.op) {
+      case 'on':
+        setOn(cont);
+        break;
+      case 'off':
+        setOff(cont);
+        break;
+      case 'flash':
+        setFlash(cont);
+        break;
+    }
+  }
+
+  const poll = () => {
+    if (queue.length === 0) {
+      delay(1, poll);
+    } else {
+      let head = queue.shift();
+      handle(head, poll);
+    }
+  };
+
+  poll();
+};
+
+const init = () => {
   gpio.setup(pin, err => {
     if (err) {
       console.log("cannot setup pin: ", pin);
-      cb(err);
-    } else cb(null, true);
+    }
+    service();
   });
 }
 
 const on = () => {
-  gpio.write(pin, true);
+  queue.push({op:'on'});
 };
 
 const off = () => {
-  gpio.write(pin, false);
+  queue.push({op:'off'});
 };
 
 const flash = () => {
-
-  const delay = (seconds, cb) => {
-    setTimeout(
-      () => cb(null, "ding"),
-      seconds * 1000
-    );
-  };
-
-  const cycle = rem => {
-    if (rem > 0) {
-      on();
-      delay(.1, () => {
-        off();
-        delay(.1, () => {
-          cycle(rem - 1);
-        });
-      });
-    }
-  };
-  cycle(10);
+  queue.push({op:'flash'});
 };
 
 exports.init = init;
