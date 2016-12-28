@@ -34,7 +34,7 @@ const service = () => {
     cycle(7);
   };
 
-  handle = (command, cont) => {
+  const handle = (command, cont) => {
     switch (command.op) {
       case 'on':
         setOn(cont);
