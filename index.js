@@ -10,7 +10,7 @@ const button = (env === 'production')
   ? require('./button')
   : require('./button-simulator');
 
-
+console.log("button", button);
 
 const topic = 'info';
 const thingName = 'GroundPi';
