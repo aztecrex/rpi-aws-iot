@@ -16,6 +16,9 @@ const topic = 'info';
 const thingName = 'GroundPi';
 
 light.init();
+button.init();
+
+button.listen(v => console.log(v ? 'pressed' : 'not-pressed'));
 
 const device = iot.device({
    keyPath: 'certs/private.pem.key',

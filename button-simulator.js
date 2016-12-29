@@ -1,6 +1,6 @@
 'use strict';
 
+console.log("in button simulator");
 
-console.log("wot?");
-
-exports.await = cb => {};
+exports.await = () => {};
+exports.init = () => {};

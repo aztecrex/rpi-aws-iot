@@ -3,8 +3,14 @@
 const gpio = require('rpi-gpio-mod');
 const pin = 37;
 
+const listeners = [];
+
 gpio.on('change', function(channel, value) {
-    console.log('Channel ' + channel + ' value is now ' + value);
+  if (channel === pin) {
+    listeners.forEach(listener => {
+      listener(!value);  // pulled up
+    });
+  }
 });
 
 
@@ -13,18 +19,13 @@ const init = () => {
     if (err) {
       console.log("cannot setup pin: ", pin);
     }
-     gpio.read(pin, (err,val) => {
-      if (err) {
-         console.log("pin could not be read");
-      } else {
-         console.log("got pin value", val);
-     }
-     });
   });
-}
-
-init();
-
-exports.await = cb => {
-
 };
+
+const listen = listener => {
+  listeners.push(listener);
+};
+
+
+exports.listen = listen;
+exports.init = init;
