@@ -18,8 +18,6 @@ const thingName = 'GroundPi';
 light.init();
 button.init();
 
-button.listen(v => console.log(v ? 'pressed' : 'not-pressed'));
-
 const device = iot.device({
    keyPath: 'certs/private.pem.key',
   certPath: 'certs/certificate.pem.crt',
@@ -80,6 +78,12 @@ thing.on('connect', () => {
   });
 });
 
+const updatePressed = pressed => {
+  let payload = {"state":{"reported":{"button":pressed}}};
+  thing.update('GroundPi', payload );
+
+};
+
 thing.on('status', (thingName, stat, clientToken, stateObject) => {
     updateDisplay(stateObject.state.desired);
     });
@@ -88,3 +92,5 @@ thing.on('status', (thingName, stat, clientToken, stateObject) => {
 thing.on('delta', (thingName, stateObject) => {
     updateDisplay(stateObject.state);
     });
+
+button.listen(updatePressed);
