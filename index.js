@@ -89,10 +89,11 @@ thing.on('status', (thingName, stat, clientToken, stateObject) => {
     if (stateObject.state.desired) {
       updateDisplay(stateObject.state.desired);
     }
+  });
 
 thing.on('delta', (thingName, stateObject) => {
     console.log("delta", JSON.stringify(stateObject));
     updateDisplay(stateObject.state);
-    });
+  });
 
 button.listen(updatePressed);
