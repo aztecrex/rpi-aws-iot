@@ -6,6 +6,11 @@ const iot = require('aws-iot-device-sdk');
 const light = (env === 'production')
   ? require('./light')
   : require('./light-simulator');
+const button = (env === 'production')
+  ? require('./button')
+  : require('./button-simulator');
+
+
 
 const topic = 'info';
 const thingName = 'GroundPi';
