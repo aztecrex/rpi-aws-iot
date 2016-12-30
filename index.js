@@ -71,6 +71,7 @@ thing.on('connect', () => {
     const sync = () => {
       setTimeout(() => {
         thing.get(thingName);
+        button.check();
         sync();
       },3000);
     };
@@ -79,13 +80,11 @@ thing.on('connect', () => {
 });
 
 const updatePressed = pressed => {
-  let payload = {"state":{"reported":{"button":pressed}}};
   thing.update('GroundPi', payload );
 
 };
 
 thing.on('status', (thingName, stat, clientToken, stateObject) => {
-    console.log("status", JSON.stringify(stateObject));
     if (stateObject.state.desired) {
       updateDisplay(stateObject.state.desired);
     }
