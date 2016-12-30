@@ -12,7 +12,7 @@ const broadcast = hwValue => {
 };
 
 gpio.on('change', function(channel, value) {
-  if (channel === pin && value) {
+  if (channel === pin && !value) {
     broadcast();
   }
 });

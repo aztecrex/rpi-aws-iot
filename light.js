@@ -79,7 +79,16 @@ const flash = () => {
   queue.push({op:'flash'});
 };
 
+const check = cb => {
+  gpio.read(pin, (err,value) => {
+    if (err) {
+      console.log("error reading light pin", err);
+    } else cb(value);
+  });
+};
+
 exports.init = init;
 exports.on = on;
 exports.off = off;
 exports.flash = flash;
+exports.check = check;

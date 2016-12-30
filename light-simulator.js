@@ -29,3 +29,4 @@ exports.init = init;
 exports.on = on;
 exports.off = off;
 exports.flash = flash;
+exports.check = () => {};
