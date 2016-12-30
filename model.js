@@ -5,39 +5,64 @@ const iot = require('aws-iot-device-sdk');
 const LAMP_STATE = 'MODEL_LAMP';
 const LAMP_FLASH = 'MODEL_FLASH';
 
-const create = id => {
-  let thing = iot.thingShadow({
+const create = (clientId, thingName, topic, listener) => {
+  let shadows = iot.thingShadow({
     keyPath: 'certs/private.pem.key',
    certPath: 'certs/certificate.pem.crt',
      caPath: 'certs/root-CA.crt',
-   clientId: "pi-thing-" + id,
+   clientId: clientId,
      region: 'us-east-1'
   });
-  let listeners = {LAMP_STATE:[],LAMP_FLASH:[]};
+
+  let lamp = false;
+
+  let report = () => {
+    let payload = {state:{reported:{lamp:lamp}}};
+    shadows.update(thingName, payload);
+  };
+
+  shadows.on('delta', (thingName, stateObject) => {
+    if (stateObject.state) {
+      if ('lamp' in stateObject.state) {
+        lamp = !!stateObject.state.lamp;
+        listener(LAMP_STATE, lamp);
+        report();
+      }
+    }
+  });
+
+  shadows.on('message', () => {
+    listener(LAMP_FLASH, true);
+  });
+
+  shadows.on('connect', () => {
+    shadows.register(thingName, err => {
+      if (err) {
+        console.log("unable to register", thingName);
+        return;
+      }
+      let sync = () => {
+        report();
+        setTimeout(3000, sync);
+      };
+      sync();
+    });
+  });
+
+  shadows.subscribe(topic);
 
   let desireLamp = state => {
-    thing.updateSt
+    listener(LAMP_STATE, state);
+    let payload = {state:{desired:{lamp:state},reported:{lamp:state}}}
+    shadows.update(thingName, payload);
   };
 
   return {
-    on: (key, listener) => listners[key].push(listener);
     glow = desireLamp(true);
   };
 
 };
 
-
-const lamp = value => {
-  broadast(LAMP, value);
-};
-
-const listen = listener => {
-  listeners.push(listener);
-};
-
-const init = id => {
-};
-
-exports.listen = listen;
-exports.init = init;
-exports.LAMP = LAMP;
+exports.create = create;
+exports.LAMP_STATE = LAMP_STATE;
+exports.LAMP_FLASH = LAMP_FLASH;
