@@ -2,10 +2,14 @@
 
 const iot = require('aws-iot-device-sdk');
 
-const LAMP_STATE = 'MODEL_LAMP';
-const LAMP_FLASH = 'MODEL_FLASH';
+const LAMP_ON = 'MODEL_LAMP_ON';
+const LAMP_OFF = 'MODEL_LAMP_OFF';
+const LAMP_FLASH = 'MODEL_LAMP_FLASH';
 
-const create = (clientId, thingName, topic, listener) => {
+const create = (clientId, opts, listener) => {
+  let topic = opts.topic || "info";
+  let thingName = opts.thingName || "GroundPi";
+
   let shadows = iot.thingShadow({
     keyPath: 'certs/private.pem.key',
    certPath: 'certs/certificate.pem.crt',
@@ -18,32 +22,34 @@ const create = (clientId, thingName, topic, listener) => {
 
   let report = () => {
     let payload = {state:{reported:{lamp:lamp}}};
-    shadows.update(thingName, payload);
+    let result = shadows.update(thingName, payload);
+    console.log("report", lamp, result);
   };
 
   shadows.on('delta', (thingName, stateObject) => {
     if (stateObject.state) {
       if ('lamp' in stateObject.state) {
         lamp = !!stateObject.state.lamp;
-        listener(LAMP_STATE, lamp);
+        listener(lamp ? LAMP_ON : LAMP_OFF);
         report();
       }
     }
   });
 
   shadows.on('message', () => {
-    listener(LAMP_FLASH, true);
+    listener(LAMP_FLASH);
   });
 
   shadows.on('connect', () => {
-    shadows.register(thingName, err => {
+    console.log("connected");
+    shadows.register(thingName, {}, err => {
       if (err) {
         console.log("unable to register", thingName);
         return;
       }
       let sync = () => {
         report();
-        setTimeout(3000, sync);
+        // setTimeout(sync, 3000);
       };
       sync();
     });
@@ -51,18 +57,20 @@ const create = (clientId, thingName, topic, listener) => {
 
   shadows.subscribe(topic);
 
-  let desireLamp = state => {
-    listener(LAMP_STATE, state);
-    let payload = {state:{desired:{lamp:state},reported:{lamp:state}}}
+  let setLamp = value => {
+    lamp = value;
+    listener(lamp ? LAMP_ON : LAMP_OFF);
+    let payload = {state:{desired:{lamp:lamp},reported:{lamp:lamp}}}
     shadows.update(thingName, payload);
   };
 
   return {
-    glow = desireLamp(true);
+    set: setLamp
   };
 
 };
 
 exports.create = create;
-exports.LAMP_STATE = LAMP_STATE;
+exports.LAMP_ON = LAMP_ON;
+exports.LAMP_OFF = LAMP_OFF;
 exports.LAMP_FLASH = LAMP_FLASH;

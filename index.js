@@ -2,8 +2,8 @@
 
 const env = process.env.ENV || 'production';
 
-// const model = require('./model');
-const light = (env === 'production')
+const modelLib = require('./model');
+const lightLib = (env === 'production')
   ? require('./light')
   : require('./light-simulator');
 // const button = (env === 'production')
@@ -13,15 +13,32 @@ const light = (env === 'production')
 // const thingName = 'GroundPi';
 // const topic = 'info';
 
-const out = light.create(40);
+const lamp = lightLib.create(40);
 
-out.flash();
-out.on();
-out.flash();
-out.off();
-out.flash();
+const modelListener = event => {
 
+  console.log("listener", event);
+  switch(event) {
+    case modelLib.LAMP_ON:
+      console.log("turning it on");
+      lamp.on();
+      break;
+    case modelLib.LAMP_OFF:
+      console.log("turning it off");
+      lamp.off();
+      break;
+    case modelLib.LAMP_FLASH:
+      console.log("flashing it");
+      lamp.flash();
+      break;
+  }
 
+};
+
+const model = modelLib.create('thing-001', {}, modelListener);
+
+setTimeout(() => model.set(false), 5000);
+setTimeout(() => model.set(true), 7000);
 
 
 // light.init();
