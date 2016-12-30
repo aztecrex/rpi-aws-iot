@@ -7,13 +7,13 @@ const listeners = [];
 
 const broadcast = hwValue => {
   listeners.forEach(listener => {
-    listener(!hwValue); // pulled up
+    listener(); // pulled up
   });
 };
 
 gpio.on('change', function(channel, value) {
-  if (channel === pin) {
-    broadcast(value);
+  if (channel === pin && value) {
+    broadcast();
   }
 });
 
@@ -25,21 +25,9 @@ const init = () => {
   });
 };
 
-const check = () => {
-  gpio.read(pin, (err, value) => {
-    if (err) {
-      console.log("error reading button pin");
-    } else {
-      broadcast(value);
-    }
-  });
-};
-
 const listen = listener => {
   listeners.push(listener);
 };
 
-
-exports.listen = listen;
 exports.init = init;
-exports.check = check;
+exports.listen = listen;

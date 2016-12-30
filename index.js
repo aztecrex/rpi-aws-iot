@@ -10,8 +10,6 @@ const button = (env === 'production')
   ? require('./button')
   : require('./button-simulator');
 
-console.log("button", button);
-
 const topic = 'info';
 const thingName = 'GroundPi';
 
@@ -71,19 +69,12 @@ thing.on('connect', () => {
     const sync = () => {
       setTimeout(() => {
         thing.get(thingName);
-        button.check();
         sync();
       },3000);
     };
     sync();
   });
 });
-
-const updatePressed = pressed => {
-  let payload = {"state":{"reported":{"button":pressed}}};
-  thing.update('GroundPi', payload );
-
-};
 
 thing.on('status', (thingName, stat, clientToken, stateObject) => {
     if (stateObject.state.desired) {
@@ -95,4 +86,4 @@ thing.on('delta', (thingName, stateObject) => {
     updateDisplay(stateObject.state);
   });
 
-button.listen(updatePressed);
+button.listen(() => console.log("ding"));
