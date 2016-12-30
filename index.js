@@ -80,6 +80,7 @@ thing.on('connect', () => {
 });
 
 const updatePressed = pressed => {
+  let payload = {"state":{"reported":{"button":pressed}}};
   thing.update('GroundPi', payload );
 
 };
@@ -91,7 +92,6 @@ thing.on('status', (thingName, stat, clientToken, stateObject) => {
   });
 
 thing.on('delta', (thingName, stateObject) => {
-    console.log("delta", JSON.stringify(stateObject));
     updateDisplay(stateObject.state);
   });
 
