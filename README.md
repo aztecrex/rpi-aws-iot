@@ -109,6 +109,10 @@ updates the _lamp_ value in the "GroudPi" Thing and sends messages to the _info_
 
 Look in the _alexa_ directory for code.
 
+## Changes
+
+- 2016-12-31 add a button. The button sets the lamp value true in the model
+
 ## TODO
 
 0. Automate the AWS setup.
