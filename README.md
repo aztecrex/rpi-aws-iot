@@ -48,37 +48,39 @@ This project uses AWS IoT to track state. The unit of state in IoT is called a "
 device is turned on or loses connectivity.
 
 The state includes two keys, _desired_, and _reported_. The desired state is set by
-applications. It is the state that and application sets. When an application sets an
-item in the desired state, it is saying "I want the state of the device to be this way,
+applications. It is the state that an application sets. When an application sets a
+value in the desired state, it is saying "I want the state of the device to be this way,
 go figure out how to make it so."
 
-The reported stated is what the device says is the current truth. It's the devide saying
-"I am this way."
+The reported stated is what the device says is the current truth. It's the device saying
+"I am this way, do you like it?"
 
 When either desired or reported changes, IoT computes a _delta_, which represents the
-difference between desired and reported states. IoT attempts to send the delta to the
+difference between desired and reported states. IoT sends the delta to the
 device. When the device receives the delta, it performs whatever local operations are
 necessary to bring it into the desired state. Then, it reports back to IoT the state
-changes it's made.
+changes it has made.
 
 In `model.js`, the state is simply the lamp value with true meaning on, and false meaning
-off. It assumes on initialization that the state is "off."  When IoT receives that, it 
-uses the desired state of the lamp to determine if any change is needed. If a change is
-needed, it sends the to the device. If no change is needed, it does not contact the device.
+off. It assumes on initialization that the state is "off."  When IoT receives that reported
+off state, it compares it to the desired state of the lamp to determine if any change is
+needed. If a change is needed, it sends the to the device. If no change is needed, it does not
+contact the device.
 
 If a change is needed, the device responds by invoking the configured listener with the
-desired state of the lamp. It then reports the new state back to IoT.
+desired state of the lamp, that listener should manipulate the hardware to bring the
+light into the requested state. `model.js` then reports the new state back to IoT.
 
 The module also supports setting the light state from a control on the device. When the
 module receives a request to set the lamp state, it checks if it is already in that
-state. If not, invokes its listener to set the correct state. Then, it notifies IoT
+state. If not, invokes its listener with the new state. Then, it notifies IoT
 with the new lamp state in _both_ desired and reported. That way, it can respond 
 immediately to the control while keeping IoT correctly synchronized. Because both 
 desired and reported are the same, IoT does not send back a delta.
 
 ### light.js
 
-This module actually drives the hardware. It uses a queue to track requests so the
+This module actually drives the lamp hardware. It uses a queue to track requests so the
 calling module need not wait for the hardware to respond. The light modulel can turn
 the light on, turn it off, and flash it. After a flash, the light returns to its previously
 designated state.
