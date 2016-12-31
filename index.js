@@ -37,8 +37,8 @@ const modelListener = event => {
 
 const model = modelLib.create('thing-001', {}, modelListener);
 
-setTimeout(() => model.set(false), 5000);
-setTimeout(() => model.set(true), 7000);
+// setTimeout(() => model.set(false), 5000);
+// setTimeout(() => model.set(true), 7000);
 
 
 // light.init();
