@@ -16,7 +16,7 @@ const createSet = (pin, value) => {
 const createFlash = pin => {
 
   let delay = (seconds, cont) => {
-    setTimeout(cont, seconds);
+    setTimeout(cont, seconds * 1000);
   };
 
   let cycle = (rem, cont) => {
