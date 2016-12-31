@@ -3,7 +3,8 @@
 const gpio = require('rpi-gpio-mod');
 
 const doSet = (pin, value, cont) => {
-  gpio.write(pin, value, () => {
+  console.log("writing",pin,value);
+  gpio.write(pin, value, err => {
     if (err) console.log("error writing", pin, value);
     cont();
   });
@@ -33,12 +34,14 @@ const createFlash = pin => {
 };
 
 const service = queue => {
+  console.log("servicing");
   let next = () => {
-    if (queue.length === 0) {
-      head = queue.shift();
+    if (queue.length !== 0) {
+      let head = queue.shift();
       head(next);
     } else setTimeout(next, 50);
   };
+  next();
 };
 
 const init = (pin, cont) => {
@@ -54,7 +57,7 @@ const create = pin => {
   const queue =[];
 
   let set = newState => {
-    if (newValue !== state) {
+    if (newState !== state) {
       state = newState;
       queue.push(createSet(pin, state));
     }
