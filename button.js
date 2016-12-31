@@ -6,7 +6,7 @@ const BUTTON_PRESS = 'BUTTON_PRESS';
 
 const init = (pin, cont) => {
     gpio.setup(pin, gpio.DIR_IN, gpio.EDGE_FALLING, err => {
-      if (err) => console.log("cannot setup pin", pin);
+      if (err) console.log("cannot setup pin", pin);
       cont();
     });
 };
