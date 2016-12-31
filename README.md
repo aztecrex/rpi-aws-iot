@@ -27,23 +27,93 @@ names:
 ## Mess with it
 
 0. Go to the IoT console, select your Thing, then go to it's _shadow_. In the shadow,
-add a key called _lamp_ with value _true_.  The LED wired to the Pi will turn on.
-0. Change the _lamp_ value to _false_ . The LED will turn off.
+add a key called _lamp_ with value _true_ to the _desired_ key of the state. 
+The LED wired to the Pi will turn on.
+0. notice that the _reported_ state of the lamp then becomes true.
+0. Change the desired _lamp_ value to _false_ . The LED will turn off.
+0. notice that the _reported_ state of the lamp becomes false.
 0. Go to the _test_ console and send any message to the topic _info_. The LED will flash
 a few times then return to its former state.
+0. press the button on the board. The LED will turn on.
+0. exit the program and run `gpio unexportall`. The light will turn off.
+0. look at the thing console and notice that the desired and reported lamp state is true.
+0. run the program again, the light will return to its former on state.
+
+## How it works
+
+### model.js
+
+This project uses AWS IoT to track state. The unit of state in IoT is called a "Thing" or
+"Thing Shadow." This is the cloud-tracked state of the device and it persists when the
+device is turned on or loses connectivity.
+
+The state includes two keys, _desired_, and _reported_. The desired state is set by
+applications. It is the state that an application sets. When an application sets a
+value in the desired state, it is saying "I want the state of the device to be this way,
+go figure out how to make it so."
+
+The reported stated is what the device says is the current truth. It's the device saying
+"I am this way, do you like it?"
+
+When either desired or reported changes, IoT computes a _delta_, which represents the
+difference between desired and reported states. IoT sends the delta to the
+device. When the device receives the delta, it performs whatever local operations are
+necessary to bring it into the desired state. Then, it reports back to IoT the state
+changes it has made.
+
+In `model.js`, the state is simply the lamp value with true meaning on, and false meaning
+off. It assumes on initialization that the state is "off."  When IoT receives that reported
+off state, it compares it to the desired state of the lamp to determine if any change is
+needed. If a change is needed, it sends the to the device. If no change is needed, it does not
+contact the device.
+
+If a change is needed, the device responds by invoking the configured listener with the
+desired state of the lamp, that listener should manipulate the hardware to bring the
+light into the requested state. `model.js` then reports the new state back to IoT.
+
+The module also supports setting the light state from a control on the device. When the
+module receives a request to set the lamp state, it checks if it is already in that
+state. If not, invokes its listener with the new state. Then, it notifies IoT
+with the new lamp state in _both_ desired and reported. That way, it can respond 
+immediately to the control while keeping IoT correctly synchronized. Because both 
+desired and reported are the same, IoT does not send back a delta.
+
+### light.js
+
+This module actually drives the lamp hardware. It uses a queue to track requests so the
+calling module need not wait for the hardware to respond. The light modulel can turn
+the light on, turn it off, and flash it. After a flash, the light returns to its previously
+designated state.
+
+### light-simulator.js
+
+A simulated light module used when developing off of the device. It displays lamp
+state on the console.
+
+### button.js
+
+This module drives a momentary pushbutton in hardware. It invokes its listener every
+time the button is pressed.
+
+### button-simulator.js
+
+A simulated button module used when developing off of the device. It treats a CR to the
+console as a button press.
 
 ## Alexa!
 
-Just finished the Alexa integration. No installer or continuous delivery yet but it is
-deployed manually as an AWS Lambda Function. Sample utterances include "turn on the light"
-and "flash the light." It's 12:15AM so I can't try it out too much without waking everyone
-but I did verify it worked to turn the light on. I used the Alexa test console to try the
-other utterances and they all work.
+The project has an Alexa integration. No installer or continuous delivery yet but it is
+deployed manually as an AWS Lambda Function. Sample utterances include "turn on the light,"
+"help," and "flash the light."
 
 The Alexa integration does the same things that the console operations above describe. It
 updates the _lamp_ value in the "GroudPi" Thing and sends messages to the _info_ topic.
 
 Look in the _alexa_ directory for code.
+
+## Changes
+
+- 2016-12-31 add a button. The button sets the lamp value true in the model
 
 ## TODO
 
