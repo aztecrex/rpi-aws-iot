@@ -17,13 +17,7 @@ const watch = (pin, action) => {
   });
 };
 
-gpio.on('change', function(channel, value) {
-  if (channel === pin && !value) {
-    broadcast();
-  }
-});
-
-create (pin, listener) => {
+const create = (pin, listener) => {
 
   init(pin, () => watch(pin, () => listener(BUTTON_PRESS)));
 
