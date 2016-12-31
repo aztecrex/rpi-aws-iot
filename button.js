@@ -1,13 +1,19 @@
 'use strict';
 
 const gpio = require('rpi-gpio-mod');
-const pin = 37;
 
-const listeners = [];
+const BUTTON_PRESS = 'BUTTON_PRESS';
 
-const broadcast = hwValue => {
-  listeners.forEach(listener => {
-    listener(); // pulled up
+const init = (pin, cont) => {
+    gpio.setup(pin, gpio.DIR_IN, gpio.EDGE_FALLING, err => {
+      if (err) => console.log("cannot setup pin", pin);
+      cont();
+    });
+};
+
+const watch = (pin, action) => {
+  gpio.on('change', (channel, value) => {
+    if (channel === pin) action();
   });
 };
 
@@ -17,17 +23,12 @@ gpio.on('change', function(channel, value) {
   }
 });
 
-const init = () => {
-  gpio.setup(pin, gpio.DIR_IN, gpio.EDGE_BOTH, err => {
-    if (err) {
-      console.log("cannot setup pin: ", pin);
-    }
-  });
+create (pin, listener) => {
+
+  init(pin, () => watch(pin, () => listener(BUTTON_PRESS)));
+
+  return {};
 };
 
-const listen = listener => {
-  listeners.push(listener);
-};
-
-exports.init = init;
-exports.listen = listen;
+exports.create = create;
+exports.BUTTON_PRESS = BUTTON_PRESS;
