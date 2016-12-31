@@ -6,9 +6,9 @@ const modelLib = require('./model');
 const lightLib = (env === 'production')
   ? require('./light')
   : require('./light-simulator');
-// const button = (env === 'production')
-//   ? require('./button')
-//   : require('./button-simulator');
+const buttonLib = (env === 'production')
+  ? require('./button')
+  : require('./button-simulator');
 
 // const thingName = 'GroundPi';
 // const topic = 'info';
@@ -36,6 +36,8 @@ const modelListener = event => {
 };
 
 const model = modelLib.create('thing-001', {}, modelListener);
+const button = buttonLib.create(37, () => model.set(true));
+
 
 // setTimeout(() => model.set(false), 5000);
 // setTimeout(() => model.set(true), 7000);
