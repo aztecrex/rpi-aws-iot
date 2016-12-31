@@ -1,85 +1,79 @@
 'use strict';
 
 const gpio = require('rpi-gpio-mod');
-const pin = 40;
 
-const queue =[];
-
-const service = () => {
-
-  const setOn = cont => {
-    gpio.write(pin, true, () => cont());
-  };
-
-  const setOff = cont => {
-    gpio.write(pin, false, () => cont());
-  };
-
-  const delay = (seconds, cont) => {
-    setTimeout(() => cont(), seconds * 1000);
-  };
-
-  const setFlash = cont => {
-    const cycle = rem => {
-      if (rem > 0) {
-        setOn(
-          () => delay(.1,
-          () => setOff(
-          () => delay(.1,
-          () => cycle(rem - 1)))));
-      } else cont();
-    };
-    cycle(7);
-  };
-
-  const handle = (command, cont) => {
-    switch (command.op) {
-      case 'on':
-        setOn(cont);
-        break;
-      case 'off':
-        setOff(cont);
-        break;
-      case 'flash':
-        setFlash(cont);
-        break;
-    }
-  }
-
-  const poll = () => {
-    if (queue.length === 0) {
-      delay(.1, poll);
-    } else {
-      let head = queue.shift();
-      handle(head, poll);
-    }
-  };
-
-  poll();
+const doSet = (pin, value, cont) => {
+  gpio.write(pin, value, err => {
+    if (err) console.log("error writing", pin, value);
+    cont();
+  });
 };
 
-const init = () => {
+const createSet = (pin, value) => {
+  return cont => doSet(pin, value, cont);
+};
+
+const createFlash = pin => {
+
+  let delay = (seconds, cont) => {
+    setTimeout(cont, seconds * 1000);
+  };
+
+  let cycle = (rem, cont) => {
+    if (rem > 0) {
+        doSet(pin, true,
+          () => delay(.1,
+          () => doSet(pin, false,
+          () => delay(.1,
+          () => cycle(rem-1, cont))))
+        );
+    } else cont();
+  };
+  return cont => cycle(7,cont);
+};
+
+const service = queue => {
+  let next = () => {
+    if (queue.length !== 0) {
+      let head = queue.shift();
+      head(next);
+    } else setTimeout(next, 50);
+  };
+  next();
+};
+
+const init = (pin, cont) => {
   gpio.setup(pin, err => {
-    if (err) {
-      console.log("cannot setup pin: ", pin);
-    }
-    service();
+    if (err) console.log("cannot setup pin: ", pin);
+    cont();
   });
 }
 
-const on = () => {
-  queue.push({op:'on'});
+const create = pin => {
+
+  var state = false;
+  const queue =[];
+
+  let set = newState => {
+    if (newState !== state) {
+      state = newState;
+      queue.push(createSet(pin, state));
+    }
+  };
+
+  let flash = () => {
+    queue.push(createFlash(pin))
+    queue.push(createSet(pin, state));
+  };
+
+  init(pin, () => service(queue));
+
+  return {
+    on: () => set(true),
+    off: () => set(false),
+    flash: flash
+  };
+
 };
 
-const off = () => {
-  queue.push({op:'off'});
-};
-
-const flash = () => {
-  queue.push({op:'flash'});
-};
-
-exports.init = init;
-exports.on = on;
-exports.off = off;
-exports.flash = flash;
+exports.create = create;

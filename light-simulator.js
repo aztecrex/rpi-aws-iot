@@ -2,30 +2,34 @@
 
 console.log("using device simulator");
 
-var high = false;
+const create = pin => {
+  var lit = false;
 
-const on = () => {
-  if (!high)
-    console.log("ON");
-  high = true;
+  let show = () => {
+    console.log(lit ? "ON" : "OFF");
+  };
+
+  let set = newLit => {
+    let emit = lit !== newLit;
+    lit = newLit;
+    if (emit) {
+      show();
+    }
+  };
+
+  let flash = () => {
+    console.log("FLASH");
+    show();
+  };
+
+  show();
+
+  return {
+    on: () => set(true),
+    off: () => set(false),
+    flash: flash
+  };
+
 };
 
-const off = () => {
-  if (high)
-    console.log("OFF");
-  high = false;
-};
-
-const flash = () => {
-  console.log("FLASH");
-};
-
-const init = () => {
-  console.log("OFF");
-  high = false;
-};
-
-exports.init = init;
-exports.on = on;
-exports.off = off;
-exports.flash = flash;
+exports.create = create;
