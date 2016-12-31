@@ -10,25 +10,18 @@ const buttonLib = (env === 'production')
   ? require('./button')
   : require('./button-simulator');
 
-// const thingName = 'GroundPi';
-// const topic = 'info';
-
 const lamp = lightLib.create(40);
 
 const modelListener = event => {
 
-  console.log("listener", event);
   switch(event) {
     case modelLib.LAMP_ON:
-      console.log("turning it on");
       lamp.on();
       break;
     case modelLib.LAMP_OFF:
-      console.log("turning it off");
       lamp.off();
       break;
     case modelLib.LAMP_FLASH:
-      console.log("flashing it");
       lamp.flash();
       break;
   }
