@@ -23,7 +23,6 @@ const create = (clientId, opts, listener) => {
   let report = () => {
     let payload = {state:{reported:{lamp:lamp}}};
     let result = shadows.update(thingName, payload);
-    console.log("report", lamp, result);
   };
 
   shadows.on('delta', (thingName, stateObject) => {
