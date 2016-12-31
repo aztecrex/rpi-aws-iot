@@ -4,14 +4,14 @@ const readlineLib = require('readline');
 
 const BUTTON_PRESS = 'BUTTON_PRESS';
 
-const readline = readlineLib.createInterface({
+console.log("in button simulator");
+
+cconst readline = readlineLib.createInterface({
   input: process.stdin,
   output: process.stdout
 });
 
-console.log("in button simulator");
-
-const create = (pin, listener) => {
+onst create = (pin, listener) => {
 
   readline.on('line', ()  => listener(BUTTON_PRESS));
 

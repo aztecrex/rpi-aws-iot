@@ -3,7 +3,6 @@
 const gpio = require('rpi-gpio-mod');
 
 const doSet = (pin, value, cont) => {
-  console.log("writing",pin,value);
   gpio.write(pin, value, err => {
     if (err) console.log("error writing", pin, value);
     cont();
@@ -34,7 +33,6 @@ const createFlash = pin => {
 };
 
 const service = queue => {
-  console.log("servicing");
   let next = () => {
     if (queue.length !== 0) {
       let head = queue.shift();
