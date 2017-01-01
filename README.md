@@ -1,6 +1,7 @@
 # AWS IoT Experiments on RPi 3
 
-[Demo and walkthrough](https://www.youtube.com/watch?v=-rB4b7DbRlk) of earlier version.
+[Demo and walkthrough](https://www.youtube.com/watch?v=-rB4b7DbRlk) of the earlier version, lastest version here adds
+momentary switch input to change IoT state.
 
 ## Hardware
 
